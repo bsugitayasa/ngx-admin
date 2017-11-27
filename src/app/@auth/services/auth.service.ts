@@ -50,7 +50,7 @@ export class NbAuthResult {
   }
 
   replaceToken(token: NbAuthSimpleToken): any {
-    this.token = token
+    this.token = token;
   }
 
   getRedirect(): any {

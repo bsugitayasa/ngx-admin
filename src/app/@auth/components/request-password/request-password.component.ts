@@ -11,10 +11,10 @@ import { getDeepFromObject } from '../../helpers';
 import { NbAuthResult, NbAuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'nb-request-password-page',
+  selector: 'ngx-request-password-page',
   styleUrls: ['./request-password.component.scss'],
   template: `
-    <nb-auth-block>
+    <ngx-auth-block>
       <h2 class="title">Forgot Password</h2>
       <small class="form-text sub-title">Enter your email adress and we’ll send a like to reset your password</small>
       <form (ngSubmit)="requestPass()" #requestPassForm="ngForm">
@@ -60,10 +60,10 @@ import { NbAuthResult, NbAuthService } from '../../services/auth.service';
           <a routerLink="../register"><strong>Sign Up</strong></a>
         </small>
       </div>
-    </nb-auth-block>
+    </ngx-auth-block>
   `,
 })
-export class NbRequestPasswordComponent {
+export class NgxRequestPasswordComponent {
 
   redirectDelay: number = 0;
   showMessages: any = {};

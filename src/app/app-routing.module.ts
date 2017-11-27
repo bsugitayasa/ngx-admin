@@ -1,46 +1,46 @@
-import {NbResetPasswordComponent} from './@auth/components/reset-password/reset-password.component';
-import {NbRequestPasswordComponent} from './@auth/components/request-password/request-password.component';
-import {NbLogoutComponent} from './@auth/components/logout/logout.component';
-import {NbRegisterComponent} from './@auth/components/register/register.component';
-import {NbLoginComponent} from './@auth/components/login/login.component';
-import {NbAuthComponent} from './@auth/components/auth.component';
+import {NgxResetPasswordComponent} from './@auth/components/reset-password/reset-password.component';
+import {NgxRequestPasswordComponent} from './@auth/components/request-password/request-password.component';
+import {NgxLogoutComponent} from './@auth/components/logout/logout.component';
+import {NgxRegisterComponent} from './@auth/components/register/register.component';
+import {NgxLoginComponent} from './@auth/components/login/login.component';
+import {NgxAuthComponent} from './@auth/components/auth.component';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { AuthGuard } from './auth-guard.service';
 
 const routes: Routes = [
-  { 
-    path: 'pages',     
+  {
+    path: 'pages',
     canActivate: [AuthGuard],
-    loadChildren: 'app/pages/pages.module#PagesModule' 
+    loadChildren: 'app/pages/pages.module#PagesModule',
   },
   {
     path: 'auth',
-    component: NbAuthComponent,
+    component: NgxAuthComponent,
     children: [
       {
         path: '',
-        component: NbLoginComponent,
+        component: NgxLoginComponent,
       },
       {
         path: 'login',
-        component: NbLoginComponent,
+        component: NgxLoginComponent,
       },
       {
         path: 'register',
-        component: NbRegisterComponent,
+        component: NgxRegisterComponent,
       },
       {
         path: 'logout',
-        component: NbLogoutComponent,
+        component: NgxLogoutComponent,
       },
       {
         path: 'request-password',
-        component: NbRequestPasswordComponent,
+        component: NgxRequestPasswordComponent,
       },
       {
         path: 'reset-password',
-        component: NbResetPasswordComponent,
+        component: NgxResetPasswordComponent,
       },
     ],
   },

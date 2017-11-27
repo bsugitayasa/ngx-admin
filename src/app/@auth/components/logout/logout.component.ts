@@ -9,12 +9,12 @@ import { Router } from '@angular/router';
 import { NbAuthService, NbAuthResult } from '../../services/auth.service';
 
 @Component({
-  selector: 'nb-logout',
+  selector: 'ngx-logout',
   template: `
     <div>Logging out, please wait...</div>
   `,
 })
-export class NbLogoutComponent implements OnInit {
+export class NgxLogoutComponent implements OnInit {
 
   redirectDelay: number = 1500;
 

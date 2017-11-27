@@ -32,8 +32,8 @@ And many more!
 ## Documentation
 This template is using [Nebular](https://github.com/akveo/nebular) modules set, documentation and other useful articles could be found [here](https://akveo.github.io/nebular/#/docs/installation/based-on-starter-kit-ngxadmin).
 
-> cd ngx-admin
-> npm install
-> ng serve
+> cd ngx-admin <br\>
+> npm install <br\>
+> ng serve <br\>
 
 Open browser http://localhost:4200

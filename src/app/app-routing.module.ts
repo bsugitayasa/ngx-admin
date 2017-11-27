@@ -6,9 +6,14 @@ import {NbLoginComponent} from './@auth/components/login/login.component';
 import {NbAuthComponent} from './@auth/components/auth.component';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
+import { AuthGuard } from './auth-guard.service';
 
 const routes: Routes = [
-  { path: 'pages', loadChildren: 'app/pages/pages.module#PagesModule' },
+  { 
+    path: 'pages',     
+    canActivate: [AuthGuard],
+    loadChildren: 'app/pages/pages.module#PagesModule' 
+  },
   {
     path: 'auth',
     component: NbAuthComponent,

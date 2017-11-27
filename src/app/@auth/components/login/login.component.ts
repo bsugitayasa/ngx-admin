@@ -77,8 +77,8 @@ import { NbAuthResult, NbAuthService } from '../../services/auth.service';
           Sign In
         </button>
       </form>
-
       <div class="links">
+        <!--
         <small class="form-text">Or connect with:</small>
 
         <div class="socials">
@@ -86,6 +86,7 @@ import { NbAuthResult, NbAuthService } from '../../services/auth.service';
           <a href="https://www.facebook.com/akveo/" target="_blank" class="socicon-facebook"></a>
           <a href="https://twitter.com/akveo_inc" target="_blank" class="socicon-twitter"></a>
         </div>
+        -->
 
         <small class="form-text">
           Don't have an account? <a routerLink="../register"><strong>Sign Up</strong></a>

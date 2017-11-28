@@ -11,6 +11,17 @@ export interface NbAuthProviders {
 
 export const defaultSettings: any = {
   forms: {
+    security: {
+      baseUrl: 'http://localhost:8082',
+      clientId: 'web-ngx',
+      clientSecret: 'CLIENT_SECRET',
+      grantType: 'password',
+      grantPath: '/oauth2/token',
+      revokePath: '/oauth2/revoke',
+    },
+    session: {
+        timeout: 300,
+    },
     login: {
       redirectDelay: 500,
       provider: 'email',

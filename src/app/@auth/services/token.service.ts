@@ -18,6 +18,7 @@ export class NbAuthToken {
   protected token: string = '';
 
   setValue(token: string) {
+    console.log(token);
     this.token = token;
   }
 

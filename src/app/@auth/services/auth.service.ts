@@ -134,6 +134,7 @@ export class NbAuthService {
   authenticate(provider: string, data?: any): Observable<NbAuthResult> {
     return this.getProvider(provider).authenticate(data)
       .switchMap((result: NbAuthResult) => {
+        console.log(result);
         if (result.isSuccess() && result.getTokenValue()) {
           return this.tokenService.set(result.getTokenValue())
             .switchMap(_ => this.tokenService.get())

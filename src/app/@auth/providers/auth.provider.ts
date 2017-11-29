@@ -77,12 +77,12 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
       defaultMessages: ['Your password has been successfully changed.'],
     },
     security: {
-      clientId: 'userpassword',
-      clientSecret: 'userpassword001',
+      clientId: 'fooClientIdPassword',
+      clientSecret: 'secret',
       grantType: 'password',
     },
     token: {
-      key: 'data.token',
+      key: 'access_token',
       getter: (module: string, res: HttpResponse<Object>) => getDeepFromObject(res.body,
         this.getConfigValue('token.key')),
     },
@@ -121,6 +121,7 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
     );
     return this.http.request(method, url, { body: body, headers: headers, observe: 'response' })
       .map((res) => {
+        console.log(res);
         if (this.getConfigValue('login.alwaysFail')) {
           throw this.createFailResponse(data);
         }
@@ -128,6 +129,7 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
         return res;
       })
       .map((res) => {
+        console.log(res);
         return new NbAuthResult(
           true,
           res,
@@ -137,6 +139,7 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
           this.getConfigValue('token.getter')('login', res));
       })
       .catch((res) => {
+        console.log(res);
         let errors = [];
         if (res instanceof HttpErrorResponse) {
           errors = this.getConfigValue('errors.getter')('login', res);

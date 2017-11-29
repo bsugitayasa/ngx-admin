@@ -19,7 +19,7 @@ import {
 } from './auth.options';
 
 import { NgxAuthComponent } from './components/auth.component';
-import { NbAuthToken, NbTokenService } from './services/token.service';
+import {NbOAuthToken, NbAuthToken,  NbTokenService} from './services/token.service';
 
 import { NgxAuthBlockComponent } from './components/auth-block/auth-block.component';
 import { NgxLoginComponent } from './components/login/login.component';
@@ -86,7 +86,7 @@ export class NbAuthModule {
         { provide: NB_AUTH_USER_OPTIONS_TOKEN, useValue: nbAuthOptions },
         { provide: NB_AUTH_OPTIONS_TOKEN, useFactory: nbOptionsFactory, deps: [NB_AUTH_USER_OPTIONS_TOKEN] },
         { provide: NB_AUTH_PROVIDERS_TOKEN, useValue: {} },
-        { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthToken },
+        { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbOAuthToken },
         { provide: NB_AUTH_INTERCEPTOR_HEADER, useValue: 'Authorization' },
         {
           provide: NbAuthService,

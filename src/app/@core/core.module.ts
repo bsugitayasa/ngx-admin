@@ -1,4 +1,3 @@
-import {NbDummyAuthProvider} from '../@auth/providers/dummy-auth.provider';
 import {NbAuthModule} from '../@auth/auth.module';
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -6,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
 import { AnalyticsService } from './utils/analytics.service';
+import { NbAuthProvider } from '../@auth/index';
 
 const NB_CORE_PROVIDERS = [
   ...DataModule.forRoot().providers,
   ...NbAuthModule.forRoot({
     providers: {
-      email: {
-        service: NbDummyAuthProvider,
+      username: {
+        service: NbAuthProvider,
         config: {
           delay: 3000,
           login: {

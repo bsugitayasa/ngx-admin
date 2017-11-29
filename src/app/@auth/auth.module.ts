@@ -7,8 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NbLayoutModule, NbCardModule, NbCheckboxModule } from '@nebular/theme';
 
 import { NbAuthService } from './services/auth.service';
-import { NbDummyAuthProvider } from './providers/dummy-auth.provider';
-import { NbEmailPassAuthProvider } from './providers/email-pass-auth.provider';
+import { NbAuthProvider } from './providers/auth.provider';
 
 import {
   defaultSettings,
@@ -20,7 +19,7 @@ import {
 } from './auth.options';
 
 import { NgxAuthComponent } from './components/auth.component';
-import { NbAuthSimpleToken, NbTokenService } from './services/token.service';
+import { NbAuthToken, NbTokenService } from './services/token.service';
 
 import { NgxAuthBlockComponent } from './components/auth-block/auth-block.component';
 import { NgxLoginComponent } from './components/login/login.component';
@@ -87,7 +86,7 @@ export class NbAuthModule {
         { provide: NB_AUTH_USER_OPTIONS_TOKEN, useValue: nbAuthOptions },
         { provide: NB_AUTH_OPTIONS_TOKEN, useFactory: nbOptionsFactory, deps: [NB_AUTH_USER_OPTIONS_TOKEN] },
         { provide: NB_AUTH_PROVIDERS_TOKEN, useValue: {} },
-        { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthSimpleToken },
+        { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthToken },
         { provide: NB_AUTH_INTERCEPTOR_HEADER, useValue: 'Authorization' },
         {
           provide: NbAuthService,
@@ -95,8 +94,7 @@ export class NbAuthModule {
           deps: [NB_AUTH_OPTIONS_TOKEN, NbTokenService, Injector],
         },
         NbTokenService,
-        NbDummyAuthProvider,
-        NbEmailPassAuthProvider,
+        NbAuthProvider,
       ],
     };
   }

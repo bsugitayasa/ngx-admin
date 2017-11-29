@@ -11,7 +11,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 
 import { NbAbstractAuthProvider } from '../providers/abstract-auth.provider';
-import { NbAuthSimpleToken, NbTokenService } from './token.service';
+import { NbAuthToken, NbTokenService } from './token.service';
 import { NB_AUTH_PROVIDERS_TOKEN } from '../auth.options';
 
 export class NbAuthResult {
@@ -26,7 +26,7 @@ export class NbAuthResult {
     protected redirect?: any,
     errors?: any,
     messages?: any,
-    token?: NbAuthSimpleToken) {
+    token?: NbAuthToken) {
 
     this.errors = this.errors.concat([errors]);
     if (errors instanceof Array) {
@@ -49,7 +49,7 @@ export class NbAuthResult {
     return this.token;
   }
 
-  replaceToken(token: NbAuthSimpleToken): any {
+  replaceToken(token: NbAuthToken): any {
     this.token = token;
   }
 
@@ -90,7 +90,7 @@ export class NbAuthService {
    * Retrieves current authenticated token stored
    * @returns {Observable<any>}
    */
-  getToken(): Observable<NbAuthSimpleToken> {
+  getToken(): Observable<NbAuthToken> {
     return this.tokenService.get();
   }
 
@@ -107,7 +107,7 @@ export class NbAuthService {
    * Returns tokens stream
    * @returns {Observable<any>}
    */
-  onTokenChange(): Observable<NbAuthSimpleToken> {
+  onTokenChange(): Observable<NbAuthToken> {
     return this.tokenService.tokenChange();
   }
 

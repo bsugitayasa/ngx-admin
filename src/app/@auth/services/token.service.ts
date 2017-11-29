@@ -13,7 +13,7 @@ import { deepExtend, getDeepFromObject, urlBase64Decode } from '../helpers';
  * Wrapper for simple (text) token
  */
 @Injectable()
-export class NbAuthSimpleToken {
+export class NbAuthToken {
 
   protected token: string = '';
 
@@ -34,7 +34,7 @@ export class NbAuthSimpleToken {
  * Wrapper for JWT token with additional methods.
  */
 @Injectable()
-export class NbAuthJWTToken extends NbAuthSimpleToken {
+export class NbOAuthToken extends NbAuthToken {
 
   /**
    * TODO: check for this.token to be not null
@@ -99,14 +99,14 @@ export class NbTokenService {
     token: {
       key: 'auth_app_token',
 
-      getter: (): Observable<NbAuthSimpleToken> => {
+      getter: (): Observable<NbAuthToken> => {
         const tokenValue = localStorage.getItem(this.getConfigValue('token.key'));
         this.tokenWrapper.setValue(tokenValue);
         return Observable.of(this.tokenWrapper);
       },
 
-      setter: (token: string|NbAuthSimpleToken): Observable<null> => {
-        const raw = token instanceof NbAuthSimpleToken ? token.getValue() : token;
+      setter: (token: string|NbAuthToken): Observable<null> => {
+        const raw = token instanceof NbAuthToken ? token.getValue() : token;
         localStorage.setItem(this.getConfigValue('token.key'), raw);
         return Observable.of(null);
       },
@@ -121,7 +121,7 @@ export class NbTokenService {
   protected token$: BehaviorSubject<any> = new BehaviorSubject(null);
 
   constructor(@Inject(NB_AUTH_OPTIONS_TOKEN) protected options: any,
-              @Inject(NB_AUTH_TOKEN_WRAPPER_TOKEN) protected tokenWrapper: NbAuthSimpleToken) {
+              @Inject(NB_AUTH_TOKEN_WRAPPER_TOKEN) protected tokenWrapper: NbAuthToken) {
     this.setConfig(options);
 
     this.get().subscribe(token => this.publishToken(token));
@@ -143,24 +143,24 @@ export class NbTokenService {
   set(rawToken: string): Observable<null> {
     return this.getConfigValue('token.setter')(rawToken)
       .switchMap(_ => this.get())
-      .do((token: NbAuthSimpleToken) => {
+      .do((token: NbAuthToken) => {
         this.publishToken(token);
       });
   }
 
   /**
    * Returns observable of current token
-   * @returns {Observable<NbAuthSimpleToken>}
+   * @returns {Observable<NbAuthToken>}
    */
-  get(): Observable<NbAuthSimpleToken> {
+  get(): Observable<NbAuthToken> {
     return this.getConfigValue('token.getter')();
   }
 
   /**
    * Publishes token when it changes.
-   * @returns {Observable<NbAuthSimpleToken>}
+   * @returns {Observable<NbAuthToken>}
    */
-  tokenChange(): Observable<NbAuthSimpleToken> {
+  tokenChange(): Observable<NbAuthToken> {
     return this.token$.publish().refCount();
   }
 
@@ -174,7 +174,7 @@ export class NbTokenService {
     return this.getConfigValue('token.deleter')();
   }
 
-  protected publishToken(token: NbAuthSimpleToken): void {
+  protected publishToken(token: NbAuthToken): void {
     this.token$.next(token);
   }
 }

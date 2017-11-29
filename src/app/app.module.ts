@@ -13,8 +13,10 @@ import { CoreModule } from './@core/core.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ThemeModule } from './@theme/theme.module';
+import { NbAuthModule } from './@auth/auth.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuard } from './auth-guard.service';
+import { NbAuthProvider } from './@auth/index';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +28,15 @@ import { AuthGuard } from './auth-guard.service';
 
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
+    NbAuthModule.forRoot({
+      providers: {
+        username: {
+          service: NbAuthProvider,
+          config: {
+          },
+        },
+      },
+    }), 
     CoreModule.forRoot(),
   ],
   bootstrap: [AppComponent],

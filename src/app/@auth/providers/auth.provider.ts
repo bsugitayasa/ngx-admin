@@ -4,119 +4,27 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import {HttpHeaders, HttpClient,  HttpResponse,  HttpErrorResponse} from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-import { NgEmailPassAuthProviderConfig } from './email-pass-auth.options';
 import { NbAuthResult } from '../services/auth.service';
 import { NbAbstractAuthProvider } from './abstract-auth.provider';
 import { getDeepFromObject } from '../helpers';
+import { NgAuthProviderConfig } from '../auth.options';
 
-/**
- * The most common authentication provider for email/password strategy.
- *
- *
- * @example
- *
- * Default settings object:
- *
- * ```
- * {
- *  baseEndpoint: '',
- *  login: {
- *    alwaysFail: false,
- *    rememberMe: true,
- *    endpoint: '/api/auth/login',
- *    method: 'post',
- *    redirect: {
- *      success: '/',
- *      failure: null,
- *    },
- *    defaultErrors: ['Login/Email combination is not correct, please try again.'],
- *    defaultMessages: ['You have been successfully logged in.'],
- *  },
- *  register: {
- *    alwaysFail: false,
- *    rememberMe: true,
- *    endpoint: '/api/auth/register',
- *    method: 'post',
- *    redirect: {
- *      success: '/',
- *      failure: null,
- *    },
- *    defaultErrors: ['Something went wrong, please try again.'],
- *    defaultMessages: ['You have been successfully registered.'],
- *  },
- *  logout: {
- *    alwaysFail: false,
- *    endpoint: '/api/auth/logout',
- *    method: 'delete',
- *    redirect: {
- *      success: '/',
- *      failure: null,
- *    },
- *    defaultErrors: ['Something went wrong, please try again.'],
- *    defaultMessages: ['You have been successfully logged out.'],
- *  },
- *  requestPass: {
- *    endpoint: '/api/auth/request-pass',
- *    method: 'post',
- *    redirect: {
- *      success: '/',
- *      failure: null,
- *    },
- *    defaultErrors: ['Something went wrong, please try again.'],
- *    defaultMessages: ['Reset password instructions have been sent to your email.'],
- *  },
- *  resetPass: {
- *    endpoint: '/api/auth/reset-pass',
- *    method: 'put',
- *    redirect: {
- *      success: '/',
- *      failure: null,
- *    },
- *    resetPasswordTokenKey: 'reset_password_token',
- *    defaultErrors: ['Something went wrong, please try again.'],
- *    defaultMessages: ['Your password has been successfully changed.'],
- *  },
- *  token: {
- *    key: 'data.token',
- *    getter: (module: string, res: HttpResponse<Object>) => getDeepFromObject(res.body,
- *      this.getConfigValue('token.key')),
- *  },
- *  errors: {
- *    key: 'data.errors',
- *    getter: (module: string, res: HttpErrorResponse) => getDeepFromObject(res.error,
- *      this.getConfigValue('errors.key'),
- *      this.getConfigValue(`${module}.defaultErrors`)),
- *  },
- *  messages: {
- *    key: 'data.messages',
- *    getter: (module: string, res: HttpResponse<Object>) => getDeepFromObject(res.body,
- *      this.getConfigValue('messages.key'),
- *      this.getConfigValue(`${module}.defaultMessages`)),
- *  },
- *}
- *
- * // Note, there is no need to copy over the whole object to change the settings you need.
- * // Also, this.getConfigValue call won't work outside ofthe default config declaration
- * // (which is inside of the `NbEmailPassAuthProvider` class), so you have to replace it with a custom helper function
- * // if you need it.
- * ```
- */
 @Injectable()
-export class NbEmailPassAuthProvider extends NbAbstractAuthProvider {
+export class NbAuthProvider extends NbAbstractAuthProvider {
 
-  protected defaultConfig: NgEmailPassAuthProviderConfig = {
-    baseEndpoint: '',
+  protected defaultConfig: NgAuthProviderConfig = {
+    baseEndpoint: 'http://localhost:8082',
     login: {
       alwaysFail: false,
       rememberMe: true,
-      endpoint: '/api/auth/login',
-      method: 'post',
+      endpoint: '/oauth/token',
+      method: 'POST',
       redirect: {
         success: '/',
         failure: null,
@@ -128,7 +36,7 @@ export class NbEmailPassAuthProvider extends NbAbstractAuthProvider {
       alwaysFail: false,
       rememberMe: true,
       endpoint: '/api/auth/register',
-      method: 'post',
+      method: 'POST',
       redirect: {
         success: '/',
         failure: null,
@@ -168,6 +76,11 @@ export class NbEmailPassAuthProvider extends NbAbstractAuthProvider {
       defaultErrors: ['Something went wrong, please try again.'],
       defaultMessages: ['Your password has been successfully changed.'],
     },
+    security: {
+      clientId: 'userpassword',
+      clientSecret: 'userpassword001',
+      grantType: 'password',
+    },
     token: {
       key: 'data.token',
       getter: (module: string, res: HttpResponse<Object>) => getDeepFromObject(res.body,
@@ -194,7 +107,14 @@ export class NbEmailPassAuthProvider extends NbAbstractAuthProvider {
   authenticate(data?: any): Observable<NbAuthResult> {
     const method = this.getConfigValue('login.method');
     const url = this.getActionEndpoint('login');
-    return this.http.request(method, url, { body: data, observe: 'response' })
+    const clientId = this.getConfigValue('security.clientId');
+    const clientSecret = this.getConfigValue('security.clientSecret');
+    const grantType = 'grant_type='+this.getConfigValue('security.grantType');
+    var username = 'username='+data.username;
+    var password = 'password='+data.password;
+    var body = grantType+"&"+username+"&"+password;
+    var headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Basic '+btoa(clientId+':'+clientSecret)});
+    return this.http.request(method, url, { body: body, headers: headers, observe: 'response' })
       .map((res) => {
         if (this.getConfigValue('login.alwaysFail')) {
           throw this.createFailResponse(data);
@@ -393,5 +313,9 @@ export class NbEmailPassAuthProvider extends NbAbstractAuthProvider {
     const actionEndpoint: string = this.getConfigValue(`${action}.endpoint`);
     const baseEndpoint: string = this.getConfigValue('baseEndpoint');
     return baseEndpoint + actionEndpoint;
+  }
+
+  getConfigValue(key: string): any {
+    return getDeepFromObject(this.config, key, null);
   }
 }

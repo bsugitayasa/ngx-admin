@@ -23,7 +23,7 @@ export class NgxLogoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.logout('email');
+    this.logout('username');
   }
 
   logout(provider: string): void {

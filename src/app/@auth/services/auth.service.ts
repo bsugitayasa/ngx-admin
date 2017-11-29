@@ -100,7 +100,7 @@ export class NbAuthService {
    * @returns {Observable<any>}
    */
   isAuthenticated(): Observable<any> {
-    return this.getToken().map(token => !!(token && token.getValue()));
+    return this.getToken().map(token => !!(token && token.getAccessToken()));
   }
 
   /**
@@ -117,7 +117,7 @@ export class NbAuthService {
    * @returns {Observable<any>}
    */
   onAuthenticationChange(): Observable<boolean> {
-    return this.onTokenChange().map(token => !!(token && token.getValue()));
+    return this.onTokenChange().map(token => !!(token && token.getAccessToken()));
   }
 
   /**
@@ -134,7 +134,6 @@ export class NbAuthService {
   authenticate(provider: string, data?: any): Observable<NbAuthResult> {
     return this.getProvider(provider).authenticate(data)
       .switchMap((result: NbAuthResult) => {
-        console.log(result);
         if (result.isSuccess() && result.getTokenValue()) {
           return this.tokenService.set(result.getTokenValue())
             .switchMap(_ => this.tokenService.get())

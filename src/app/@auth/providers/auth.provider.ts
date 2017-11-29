@@ -19,7 +19,7 @@ import { NgAuthProviderConfig } from '../auth.options';
 export class NbAuthProvider extends NbAbstractAuthProvider {
 
   protected defaultConfig: NgAuthProviderConfig = {
-    baseEndpoint: 'http://localhost:8082',
+    baseEndpoint: 'http://s201403171-desktop.local:8082',
     login: {
       alwaysFail: false,
       rememberMe: true,
@@ -46,8 +46,8 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
     },
     logout: {
       alwaysFail: false,
-      endpoint: '/api/auth/logout',
-      method: 'delete',
+      endpoint: '/oauth/token',
+      method: 'DELETE',
       redirect: {
         success: '/',
         failure: null,
@@ -82,9 +82,9 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
       grantType: 'password',
     },
     token: {
-      key: 'access_token',
+      key: 'data.token',
       getter: (module: string, res: HttpResponse<Object>) => getDeepFromObject(res.body,
-        this.getConfigValue('token.key')),
+        'access_token'),
     },
     errors: {
       key: 'data.errors',
@@ -121,7 +121,6 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
     );
     return this.http.request(method, url, { body: body, headers: headers, observe: 'response' })
       .map((res) => {
-        console.log(res);
         if (this.getConfigValue('login.alwaysFail')) {
           throw this.createFailResponse(data);
         }
@@ -129,7 +128,6 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
         return res;
       })
       .map((res) => {
-        console.log(res);
         return new NbAuthResult(
           true,
           res,
@@ -139,7 +137,6 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
           this.getConfigValue('token.getter')('login', res));
       })
       .catch((res) => {
-        console.log(res);
         let errors = [];
         if (res instanceof HttpErrorResponse) {
           errors = this.getConfigValue('errors.getter')('login', res);
@@ -276,13 +273,20 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
 
     const method = this.getConfigValue('logout.method');
     const url = this.getActionEndpoint('logout');
-
+    const clientId = this.getConfigValue('security.clientId');
+    const clientSecret = this.getConfigValue('security.clientSecret');
+    const headers = new HttpHeaders(
+      {
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+        'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret),
+      },
+    );
     return Observable.of({})
       .switchMap((res: any) => {
         if (!url) {
           return Observable.of(res);
         }
-        return this.http.request(method, url, { observe: 'response' });
+        return this.http.request(method, url, { headers: headers, observe: 'response', responseType: 'text' });
       })
       .map((res) => {
         if (this.getConfigValue('logout.alwaysFail')) {

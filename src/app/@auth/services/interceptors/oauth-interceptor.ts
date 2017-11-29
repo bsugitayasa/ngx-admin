@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/switchMap';
 
 import { NbAuthService } from '../auth.service';
-import { NbOAuthToken } from '../token.service';
+import { NbAuthToken } from '../token.service';
 
 @Injectable()
 export class NbOAuthInterceptor implements HttpInterceptor {
@@ -15,9 +15,9 @@ export class NbOAuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     return this.authService.getToken()
-      .switchMap((token: NbOAuthToken) => {
+      .switchMap((token: NbAuthToken) => {
         if (token) {
-          const accessToken = `Bearer ${token.getValue()}`;
+          const accessToken = `Bearer ${token.getAccessToken()}`;
           req = req.clone({
             setHeaders: {
               Authorization: accessToken,

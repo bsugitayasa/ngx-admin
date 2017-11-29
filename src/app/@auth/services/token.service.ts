@@ -9,59 +9,24 @@ import 'rxjs/add/observable/of';
 import { NB_AUTH_OPTIONS_TOKEN, NB_AUTH_TOKEN_WRAPPER_TOKEN } from '../auth.options';
 import { deepExtend, getDeepFromObject, urlBase64Decode } from '../helpers';
 
-/**
- * Wrapper for simple (text) token
- */
 @Injectable()
 export class NbAuthToken {
 
-  protected token: string = '';
+  protected accessToken: string = '';
+  protected expiresIn: any;
+  protected refreshToken: string = '';
+  protected tokenType: string = '';
+  protected scope: string = '';
 
-  setValue(token: string) {
-    console.log(token);
-    this.token = token;
+  setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
   }
 
-  /**
-   * Returns the token value
-   * @returns string
-   */
-  getValue() {
-    return this.token;
-  }
-}
-
-/**
- * Wrapper for JWT token with additional methods.
- */
-@Injectable()
-export class NbOAuthToken extends NbAuthToken {
-
-  /**
-   * TODO: check for this.token to be not null
-   * Returns payload object
-   * @returns any
-   */
-  getPayload(): any {
-    const parts = this.token.split('.');
-
-    if (parts.length !== 3) {
-      throw new Error(`The token ${this.token} is not valid JWT token and must consist of three parts.`);
-    }
-
-    const decoded = urlBase64Decode(parts[1]);
-    if (!decoded) {
-      throw new Error(`The token ${this.token} is not valid JWT token and cannot be decoded.`);
-    }
-
-    return JSON.parse(decoded);
+  getAccessToken() {
+    return this.accessToken;
   }
 
-  /**
-   * Returns expiration date
-   * @returns Date
-   */
-  getTokenExpDate(): Date {
+  /* getTokenExpDate(): Date {
     const decoded = this.getPayload();
     if (!decoded.hasOwnProperty('exp')) {
       return null;
@@ -71,43 +36,24 @@ export class NbOAuthToken extends NbAuthToken {
     date.setUTCSeconds(decoded.exp);
 
     return date;
-  }
+  } */
 }
 
-/**
- * Nebular token service. Provides access to the stored token.
- * By default returns NbAuthSimpleToken instance,
- * but you can inject NbAuthJWTToken if you need additional methods for JWT token.
- *
- * @example Injecting NbAuthJWTToken, so that NbTokenService will now return NbAuthJWTToken instead
- * of the default NbAuthSimpleToken
- *
- * ```
- * // import token and service into your AppModule
- * import { NB_AUTH_TOKEN_WRAPPER_TOKEN,  NbAuthJWTToken} from '@nebular/auth';
- *
- * // add to a list of providers
- * providers: [
- *  // ...
- *  { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthJWTToken },
- * ],
- * ```
- */
 @Injectable()
 export class NbTokenService {
 
   protected defaultConfig: any = {
     token: {
-      key: 'auth_app_token',
+      key: 'access_token',
 
       getter: (): Observable<NbAuthToken> => {
         const tokenValue = localStorage.getItem(this.getConfigValue('token.key'));
-        this.tokenWrapper.setValue(tokenValue);
+        this.tokenWrapper.setAccessToken(tokenValue);
         return Observable.of(this.tokenWrapper);
       },
 
       setter: (token: string|NbAuthToken): Observable<null> => {
-        const raw = token instanceof NbAuthToken ? token.getValue() : token;
+        const raw = token instanceof NbAuthToken ? token.getAccessToken() : token;
         localStorage.setItem(this.getConfigValue('token.key'), raw);
         return Observable.of(null);
       },

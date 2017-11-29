@@ -130,7 +130,6 @@ export class NgxLoginComponent {
 
       const redirect = result.getRedirect();
       return this.router.navigateByUrl(redirect);
-      
     });
   }
 

@@ -36,7 +36,7 @@ import { NbAuthProvider } from './@auth/index';
           },
         },
       },
-    }), 
+    }),
     CoreModule.forRoot(),
   ],
   bootstrap: [AppComponent],

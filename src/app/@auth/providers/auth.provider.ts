@@ -109,11 +109,16 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
     const url = this.getActionEndpoint('login');
     const clientId = this.getConfigValue('security.clientId');
     const clientSecret = this.getConfigValue('security.clientSecret');
-    const grantType = 'grant_type='+this.getConfigValue('security.grantType');
-    var username = 'username='+data.username;
-    var password = 'password='+data.password;
-    var body = grantType+"&"+username+"&"+password;
-    var headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Basic '+btoa(clientId+':'+clientSecret)});
+    const grantType = 'grant_type=' + this.getConfigValue('security.grantType');
+    const username = 'username=' + data.username;
+    const password = 'password=' + data.password;
+    const body = grantType + '&' + username + '&' + password;
+    const headers = new HttpHeaders(
+      {
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 
+        'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret),
+      }
+    );
     return this.http.request(method, url, { body: body, headers: headers, observe: 'response' })
       .map((res) => {
         if (this.getConfigValue('login.alwaysFail')) {

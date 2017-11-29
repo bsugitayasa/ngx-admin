@@ -115,9 +115,9 @@ export class NbAuthProvider extends NbAbstractAuthProvider {
     const body = grantType + '&' + username + '&' + password;
     const headers = new HttpHeaders(
       {
-        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
         'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret),
-      }
+      },
     );
     return this.http.request(method, url, { body: body, headers: headers, observe: 'response' })
       .map((res) => {
